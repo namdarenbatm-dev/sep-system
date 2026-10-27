@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14509f">
+<title>سامانه‌ها | سپ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+@font-face{font-family:'Yekan';src:url('Yekan.ttf') format('truetype');font-display:block}
+:root{--blue:#14509f;--bg:#f2f5fa;--line:#d5deea;--green:#16a34a;--red:#dc2626}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:'Yekan',Tahoma,sans-serif;background:var(--bg);color:#1c2733;font-size:17px}
+button,input,textarea{font-family:inherit;font-size:inherit}
+
+/* splash */
+#splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;z-index:10;transition:opacity .6s}
+#splash img{width:200px;height:200px;animation:pop 1s ease both}
+#splash h1{margin:0;font-size:34px;font-weight:normal;color:var(--blue);animation:pop 1s .3s ease both}
+#splash.hide{opacity:0;pointer-events:none}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* app */
+#app{max-width:760px;margin:0 auto;padding:16px 16px calc(40px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:12px 16px;border:1px solid var(--line)}
+header img{width:54px;height:54px}
+header h2{margin:0;font-size:21px;font-weight:normal;color:var(--blue)}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+.card h3{margin:0 0 12px;font-size:18px;font-weight:normal;color:var(--blue)}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;color:#fff;cursor:pointer}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.green{background:var(--green)} .red{background:var(--red)} .blue{background:var(--blue)}
+.hint{color:#5b6b7c;font-size:15px;margin-top:8px}
+input[type=text],textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:inherit}
+textarea{min-height:150px;resize:vertical;line-height:1.9}
+#results{margin-top:10px;max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:12px}
+#results:empty{display:none}
+#results div{padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+#results div:last-child{border-bottom:0}
+#results div.sel{background:#e3eefb;color:var(--blue)}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid var(--line);padding:10px 8px;text-align:center}
+th{background:#e8f0fa;font-weight:normal;color:var(--blue)}
+.lat{direction:ltr;font-family:Menlo,Consolas,'Courier New',monospace;font-size:15px;word-break:break-all}
+.company{font-size:19px;color:var(--blue)}
+.msg{margin-top:8px;font-size:15px}
+.err{color:var(--red)} .ok{color:var(--green)}
+label{display:block;margin:12px 0 6px;font-size:15px;color:#40505f}
+details summary{cursor:pointer;color:var(--blue);font-size:18px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <img src="logo.png" alt="SEP">
+  <h1>سامانه ها</h1>
+</div>
+
+<div id="app" hidden>
+  <header><img src="logo.png" alt="SEP"><h2>سامانه‌های کارگزاران هدایت تراکنش سپ</h2></header>
+
+  <section class="card">
+    <h3>۱. بانک اطلاعاتی</h3>
+    <button class="btn green" id="uploadBtn">آپلود فایل اکسل</button>
+    <input type="file" id="file" accept=".xlsx" hidden>
+    <div class="msg" id="fileMsg"></div>
+  </section>
+
+  <section class="card">
+    <h3>۲. جستجوی شرکت</h3>
+    <input type="text" id="q" placeholder="بخشی از نام شرکت را وارد کنید" autocomplete="off" disabled>
+    <div id="results"></div>
+    <div id="preview" hidden></div>
+  </section>
+
+  <section class="card">
+    <h3>۳. فایل PDF</h3>
+    <button class="btn red" id="dlBtn" disabled>دانلود فایل PDF</button>
+    <div class="msg" id="dlMsg"></div>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>تنظیمات متن راهنما و فوتر</summary>
+      <label for="guide">متن راهنمای سامانه‌ها (برای همه شرکت‌ها یکسان است)</label>
+      <textarea id="guide" placeholder="توضیح دهید هر سامانه دقیقاً چه کاربردی دارد..."></textarea>
+      <div class="row">
+        <div><label for="p1">شماره تماس اول</label><input type="text" id="p1" inputmode="tel" dir="ltr"></div>
+        <div><label for="p2">شماره تماس دوم</label><input type="text" id="p2" inputmode="tel" dir="ltr"></div>
+      </div>
+      <div class="hint">متن فوتر: «جهت کسب اطلاعات بیشتر با … و … در زمان اداری تماس حاصل فرمایید.»</div>
+      <button class="btn blue" id="saveBtn" style="margin-top:14px">ذخیره</button>
+      <div class="msg" id="saveMsg"></div>
+    </details>
+  </section>
+</div>
+
+<script src="jszip.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
